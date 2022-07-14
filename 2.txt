@@ -1,0 +1,82 @@
+#include <stdafx.h>
+#include <stdio.h>
+#include <glut.h>
+int x, y, flag=0, theta=0, tx=0,ty=0;
+void draw_point(int x1, int y1)
+{
+glPointSize(5);
+glBegin(GL_POINTS);
+glVertex2f(x1,y1); 
+glEnd();
+}
+void triangle(int x, int y)
+{
+glColor3f(1,0,0);
+glBegin(GL_POLYGON); 
+glVertex2i(x,y);
+glVertex2i(x+400,y+300);
+glVertex2i(x+300,y+0);
+glEnd();
+}
+void display()
+{
+glClear(GL_COLOR_BUFFER_BIT);
+glLoadIdentity();
+glColor3f(1,1,1); 
+draw_point(0,0); 
+if (flag==1) 
+{
+tx = 0; 
+ty = 0;
+theta += 1; 
+}
+if (flag==2) 
+{
+tx = x; 
+ty = y;
+theta += 1; 
+glColor3f(0,0,1);
+draw_point(x,y); 
+}
+glTranslatef(tx, ty, 0);
+glRotatef(theta, 0, 0, 1); 
+glTranslatef(-tx, -ty, 0); 
+triangle(tx,ty); 
+glutPostRedisplay(); 
+glutSwapBuffers(); 
+}
+void reshape()
+{
+glClearColor(0,0,0,1);
+glMatrixMode(GL_PROJECTION);
+glLoadIdentity();
+gluOrtho2D(-800, 800, -800, 800);
+glMatrixMode(GL_MODELVIEW);
+}
+void rotate(int option)
+{
+if(option==1)
+flag=1; 
+if(option==2)
+flag=2; 
+if(option==3)
+flag=3; 
+}
+int main(int argc, char **argv)
+{
+printf( "Enter Fixed Points (x,y) for Rotation: \n");
+scanf("%d %d", &x, &y); 
+glutInit(&argc, argv); 
+glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGB);
+glutInitWindowSize(800, 800); 
+glutInitWindowPosition(0, 0); 
+glutCreateWindow("Triangle Transformation");
+reshape(); 
+glutDisplayFunc(display);
+glutCreateMenu(rotate); 
+glutAddMenuEntry("Rotate around ORIGIN",1);
+glutAddMenuEntry("Rotate around FIXED POINT",2);
+glutAddMenuEntry("Stop Rotation",3);
+glutAttachMenu(GLUT_RIGHT_BUTTON);
+glutMainLoop(); 
+}
